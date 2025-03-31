@@ -1,0 +1,18 @@
+- name: Deploy Drupal with Docker Compose
+  hosts: web
+  become: true
+  tasks:
+    - name: Create app directory
+      file:
+        path: /opt/drupal
+        state: directory
+
+    - name: Copy docker-compose file
+      copy:
+        src: ./docker-compose.yml
+        dest: /opt/drupal/docker-compose.yml
+
+    - name: Start Drupal container
+      shell: |
+        cd /opt/drupal
+        docker-compose up -d

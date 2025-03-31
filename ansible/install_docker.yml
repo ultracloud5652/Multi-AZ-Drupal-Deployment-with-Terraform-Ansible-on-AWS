@@ -1,0 +1,66 @@
+---
+- name: Install Docker and Docker Compose
+  hosts: drupal_servers
+  become: true
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      args:
+        warn: false
+
+    - name: Add Docker repository
+      shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Install latest Docker Compose
+      shell: |
+        DOCKER_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)
+        curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+      args:
+        creates: /usr/local/bin/docker-compose
+
+    - name: Verify Docker Compose installation
+      stat:
+        path: /usr/local/bin/docker-compose
+      register: docker_compose_stat
+
+    - name: Display Docker Compose version
+      shell: /usr/local/bin/docker-compose --version
+      register: docker_compose_version
+      changed_when: false
+
+    - name: Show Docker Compose version
+      debug:
+        msg: "Docker Compose version: {{ docker_compose_version.stdout }}"
+

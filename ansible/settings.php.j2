@@ -1,0 +1,27 @@
+<?php
+
+$databases = array(
+  'default' =>
+    array(
+      'default' =>
+        array(
+          'driver' => 'mysql',
+          'host' => "{{ drupal_db_host }}",
+          'database' => "{{ drupal_db_name }}",
+          'username' => "{{ drupal_db_user }}",
+          'password' => "{{ drupal_db_password }}",
+          'prefix' => '',
+          'collation' => 'utf8_general_ci',
+          'port' => "{{ drupal_db_port }}",  # Using the port defined in the playbook
+        ),
+    ),
+);
+
+$settings['hash_salt'] = 'some-random-string-here';
+$settings['trusted_host_patterns'] = array(
+  '^{{ ip_address }}$',
+);
+
+$settings['file_public_path'] = 'sites/default/files';
+$settings['file_private_path'] = 'sites/default/files/private';
+$settings['file_temporary_path'] = '/tmp';

@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: drupal_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal_user
+      MYSQL_PASSWORD: drupal_password
+    volumes:
+      - ./db_data:/var/lib/mysql
+    networks:
+      - drupal_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  drupal:
+    image: drupal:latest
+    container_name: drupal_site
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DRUPAL_DATABASE_HOST: mysql
+      DRUPAL_DATABASE_NAME: drupal
+      DRUPAL_DATABASE_USER: drupal_user
+      DRUPAL_DATABASE_PASSWORD: drupal_password
+    volumes:
+      - ./drupal_data:/var/www/html
+    networks:
+      - drupal_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  db_data:
+
+networks:
+  drupal_network:
