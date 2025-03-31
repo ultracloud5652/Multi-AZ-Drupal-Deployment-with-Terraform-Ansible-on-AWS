@@ -7,6 +7,8 @@
 .tfstate.backup
 .terraform.tfstate
 .terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
 
 
 # Ignore Ansible sensitive templates
