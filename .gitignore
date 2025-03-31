@@ -1,2 +1,16 @@
+# Ignore environment files
 .env
+
+# Ignore Terraform cache and provider binaries
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Ignore Ansible sensitive templates
 /ansible/settings.php.j2
+
+# Ignore system files
+.DS_Store
+.idea/
+.vscode/
+__pycache__/
