@@ -3,18 +3,11 @@
 
 # Ignore Terraform cache and provider binaries
 .terraform/
-*.tfstate
-*.tfstate.backup
-*.terraform.tfstate
-
+.tfstate
+.tfstate.backup
+.terraform.tfstate
 .terraform.lock.hcl
 
 
 # Ignore Ansible sensitive templates
 /ansible/settings.php.j2
-
-# Ignore system files
-.DS_Store
-.idea/
-.vscode/
-__pycache__/
